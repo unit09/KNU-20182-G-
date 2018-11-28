@@ -5,8 +5,8 @@
 #define BD_H 20
 #define BD_W 16
 
-#define BD_X 5
-#define BD_Y 3
+#define BD_X 2
+#define BD_Y 7
 
 #define DELAY 100
 
