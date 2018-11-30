@@ -730,100 +730,62 @@ int Detect (int rotation, int move_x, int move_y)//보드상 1인지 아닌지 �
 }
 
 //벽돌생성
-
-void showBlock(int rotation)
-
+void show_BLK(int rotation) //특정한 모양의 블럭을 해당 커서 위치에 생성하라, 라는 함수
 {
-
+	int cursor_x, cursor_y;
 	int x, y;
 
-	COORD cursor = getCursor();
+	getyx(stdscr, cursor_y, cursor_x);
 
-	int prove;
+	int P;
 
-	//int n=(rotation-1)%4;
+	P = Detect(rotation, 0, 0);
 
-	prove = detect(rotation, 0, 0);
-
-	if (prove == 0)
-
+	if(P == 0)
 	{
-
-		//콘솔창위치설정배열값에서1은■출력은출력없음
-
-		for (y = 0; y<4; y++)
-
+		for(y=0 ; y<4 ; y++)
 		{
-
-			for (x = 0; x<4; x++)
-
+			for(x=0 ; x<4 ; x++)
 			{
-
-				setCursor(cursor.X + (x * 2), cursor.Y + y);
-
-				if (block[rotation][y][x] == 1)
-
-					printf("■");
-
+				st_Cursor(cursor_x + (x*2), cursor_y + y);
+				if(BLK[rotation][y][x] == 1)
+					printf("■ ");
 			}
+		}
+	}
 
+	st_Cursor(cursor_x, cursor_y);
+
+	
+}
+
+void remove_BLK(int rotation, int move_x, int move_y)
+{
+	int P;
+	int cursor_x, cursor_y;
+	int x, y;
+
+	getyx(stdscr, cursor_y, cursor_x);
+	P = Detect(rotation, move_x, move_y);
+
+	if(P == 0) //겹치지 않으면 현재 커서위치 블럭을 지운다.
+	{
+		for(y=0; y<4; y++)
+		{
+			for(x=0; x<4; x++)
+			{
+				st_Cursor(cursor_x + (2*x), cursor_y + y);
+
+				if(BLK[rotation][y][x] == 1)
+					printf(" "); //블럭삭제
+			}
 		}
 
-		setCursor(cursor.X, cursor.Y);
+		st_Cursor(cursor_x + move_x, cursor_y + move_y); //커서이동
 
 	}
 
 }
-
-
-
-
-
-void removeBlock(int rotation, int move1, int move2) //벽돌 삭제
-
-{
-
-	int pr;
-
-	int x, y;
-
-
-	COORD cursor = getCursor();
-
-
-
-	pr = detect(rotation, move1, move2);
-
-
-
-	if (pr == 0)
-
-	{
-
-		for (y = 0; y<4; y++)
-
-		{
-
-			for (x = 0; x<4; x++)
-
-			{
-
-				setCursor(cursor.X + (x * 2), cursor.Y + y);
-
-				if (block[rotation][y][x] == 1)
-
-					printf(" ");
-
-			}
-
-		}
-
-		setCursor(cursor.X + move1, cursor.Y + move2);
-
-	}
-
-}
-
 
 
 
