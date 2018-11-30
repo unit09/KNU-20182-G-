@@ -788,5 +788,37 @@ void remove_BLK(int rotation, int move_x, int move_y)
 }
 
 
+void Board_Cognition(int n, int move_x, int move_y)//보드 인식 함수
+{
+	int x, y;
+	int cursor_x, cursor_y;
+	getyx(stdscr, cursor_y, cursor_x);
+
+	int ARR_X = cursor_x + move_x; //콘솔좌표열
+	int ARR_Y = cursor_y + move_y; //콘솔좌표행
+
+	ARR_X = (ARR_X - 5)/2; //BD_X = 5  //콘솔좌표 배열열 변환값
+	ARR_Y = ARR_Y - 3; //BD_Y = 3   //콘솔좌표 배열행 변환값 
+
+ 	//보드판에서 블록이동시 1인식
+	
+	for(y=0 ; y<4 ; y++)
+	{
+		for(x=0; x<4 ; x++)
+		{
+			if(BLK[n][y][x] == 1)
+			{
+				BD[ARR_Y + y][ARR_X + x] = 1;
+			}
+		}
+	}
+
+
+	return;
+
+}
+
+
+
 
 
