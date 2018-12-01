@@ -7,8 +7,8 @@
 
 void initial(int x, int y){
 
-	curX=x;
-	curY=y;
+	CX=x;
+	CY=y;
 
 	seCursor(x,y);
 }
