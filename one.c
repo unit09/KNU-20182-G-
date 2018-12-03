@@ -819,6 +819,42 @@ void Board_Cognition(int n, int move_x, int move_y)//보드 인식 함수
 }
 
 
+void Array_Down(int col) //배열 블록 옮김
+{
+	int y, x;
+
+
+	for ( y = col ; y >= 0 ; y--)
+	{
+		for( x = 1 ; x <= 10 : x++ )
+		{
+			BD[y][x] = BD[y-1][x];//해당 y줄보다 한줄 전 줄의 1들을 밑으로 내린다.
+		}
+	}
+
+	//BD배열 0행에 0삽입
+	//위의 반복문에서 보드 0행의 값은 변하지 않으므로 여기서 0으로 따로 초기화해준다.
+	
+	for ( x = 1 ; x <= 10 ; x++ )
+		BD[0][x] = 0;
+
+	/*BD배열 1값 전체 출력*/
+	//네모 아닌 부분은 빈칸으로 리셋
+	for ( y = 1 ; y <= 19 ; y++ )
+	{
+		for ( x = 1 ; x <= 10 ; x++ )
+		{
+			st_Cursor((BOARD_X) + (x*2) + 1, y + BD_Y);
+
+			if ( BD[y][x] == 1)
+				printf("■ ");
+
+			else
+				printf(" ");
+		}
+	}
+}
+
 
 
 
