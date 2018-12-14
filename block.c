@@ -1,12 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <curses.h>
-#include <time.h>
-#include <unistd.h>
-#include <signal.h>
-
-int createBlock();
-void moveBlock(int, int, int, int);
+#include "tetris.h"
 
 int block[7][4][4][4] = {
 	{
@@ -167,12 +159,12 @@ int createBlock(){
 	return num;
 }
 
-void moveBlock(int ro_x, int ro_y, int num, int shape){
+void paintBlock(cur current, int num, int shape){
 	int i, j;
 	
 	for(i = 0; i < 4; i++){
 		for(j = 0; j < 4; j++){
-			move(ro_y+i, ro_x+j);
+			move(current.y+i, current.x+j);
 			if(block[num][shape][i][j] == 1){
 				addch('O');
 			}				
