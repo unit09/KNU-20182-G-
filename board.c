@@ -1,35 +1,22 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <curses.h>
-#include <time.h>
-#include <unistd.h>
-#include <signal.h>
-#include <sys/time.h>
 #include <pthread.h>
 #include <termios.h>
+#include <sys/time.h>
 
-//board size
-#define BD_H 18
-#define BD_W 16
-//board position
-#define BD_X 7
-#define BD_Y 4
-//block initial position
-#define BLOCK_X 13
-#define BLOCK_Y 0
+#include "tetris.h"
 
-#define DELAY 500
-
-int board[BD_H][BD_W] = {0, };
-int score = 0;
+#define DELAY 500	//level1: 500 -> 400 -> 300 -> 200 -> 100(final)
 
 void *screen(void *);
 void showboard();
-int createBlock();
-void moveBlock(int, int, int, int);
 int rotation(int);
+void moveA(int);
+int set_ticker(int);
 
-int ro_x, ro_y, num, shape = 0;
+int board[BD_H][BD_W] = {0, };
+int score = 0;
+int num;	// 현재 블록의 번호 (모양)
+int shape = 0;	// 현재 블록의 모양 (회전 상태)
+cur current;
 
 int main(){
 	int i, j;
@@ -59,12 +46,11 @@ int main(){
 		exit(1);
 	}
 	
-
-	ro_x = BLOCK_X;
-	ro_y = BLOCK_Y;
+	current.x = BLOCK_X;
+	current.y = BLOCK_Y;
 	num = createBlock();	//나중에 다른곳에도 추가되어야 함
 
-	while(1){	// 모든 행동들이 한타임 느림, 행동을 했을때 즉시 적용되서 보이게 해야됨
+	while(1){
 		c = getchar();
 		if(c == 'Q') break;
 		switch(c){
@@ -72,13 +58,13 @@ int main(){
 				shape = rotation(shape);
 				break;
 			case 'a':
-				ro_x--;
+				current.x--;
 				break;
 			case 'd':
-				ro_x++;
+				current.x++;
 				break;
 			case 's':
-				ro_y++;	//되기는 하는데 너무 빠름 보이지 않을정도로...
+				current.y++;
 				break;
 		}
 	}
@@ -90,18 +76,24 @@ void *screen(void *no){
 	initscr();
 	crmode();
 	noecho();
+	curs_set(0);
+
+	signal(SIGALRM, moveA);
+	set_ticker(DELAY);
 
 	while(1){
 		clear();
 		showboard();
-		moveBlock(ro_x, ro_y, num, shape);
+		paintBlock(current, num, shape);
 
 		move(LINES-1, COLS-1);
 
 		refresh();
-		usleep(DELAY*1000);
-		ro_y++;
 	}
+}
+
+void moveA(int signum){
+	current.y++;
 }
 
 void showboard(){
@@ -132,6 +124,21 @@ void showboard(){
 	printw("QUIT : Q");
 }
 
+int set_ticker(int n_msecs){
+	struct itimerval new_timeset;
+	long n_sec, n_usecs;
+
+	n_sec = n_msecs/1000;
+	n_usecs = (n_msecs%1000) * 1000L;
+
+	new_timeset.it_interval.tv_sec = n_sec;
+	new_timeset.it_interval.tv_usec = n_usecs;
+	new_timeset.it_value.tv_sec = n_sec;
+	new_timeset.it_value.tv_usec = n_usecs;
+
+	return setitimer(ITIMER_REAL, &new_timeset, NULL);
+}
+
 int rotation(int shape){
 	//회전이 가능한지도 체크해야함 그걸 위해 ro_x와 ro_y를 받아와야함
 	shape++;
@@ -140,4 +147,10 @@ int rotation(int shape){
 	}
 
 	return shape;			
+}
+
+cur getCursor(void){
+	cur temp;
+	getyx(stdscr,temp.x,temp.y); //STDSCR 상태 커서를 받을 수있음(real screen 에 나오기 전에 buffer 상태)
+	return temp;
 }
