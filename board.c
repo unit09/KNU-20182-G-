@@ -48,34 +48,45 @@ int main(){
 	
 	current.x = BLOCK_X;
 	current.y = BLOCK_Y;
-	num = createBlock();	//나중에 다른곳에도 추가되어야 함
+	num = createBlock();
 
 	while(1){
 		c = getchar();
 		if(c == 'Q') break;
+		
 		switch(c){
 			case 'f':
-				shape = rotation(shape);
+				shape = rotation(num, shape);
 				break;
 			case 'a':
-				current.x--;
-				break;
+				getBlock(temp, num, shape);
+				if(vaildMove(temp, -1, 0) == 0)
+					current.x--;
+					break;
 			case 'd':
-				current.x++;
+				getBlock(temp, num, shape);
+				if(vaildMove(temp, 1, 0) == 0)
+					current.x++;
 				break;
 			case 's':
-				current.y++;
-				break;
+				getBlock(temp, num, shape);
+				check = vaildMove(temp, 0, 1);
+				if(check == 0)
+					current.y++;
+				else if(check == 2){
+					play = 0;
+					setBlock();
+					removeLine();
+					break;
+				
+				}
 		}
 	}
-
 	endwin();
 }
 
 void *screen(void *no){
 	initscr();
-	crmode();
-	noecho();
 	curs_set(0);
 
 	signal(SIGALRM, moveA);
@@ -93,7 +104,18 @@ void *screen(void *no){
 }
 
 void moveA(int signum){
-	current.y++;
+	int temp[4][4];
+	int check;
+
+	signal(SIGALRM, moveA);
+	
+
+	getBlock(temp, num, shape);
+	check = vaildMove(temp, 0, 1);
+	if(check == 0)
+		current.y++;
+	else if(check == 2){
+		setBlock();
 }
 
 void showboard(){
@@ -139,18 +161,51 @@ int set_ticker(int n_msecs){
 	return setitimer(ITIMER_REAL, &new_timeset, NULL);
 }
 
-int rotation(int shape){
-	//회전이 가능한지도 체크해야함 그걸 위해 ro_x와 ro_y를 받아와야함
-	shape++;
-	if(shape >= 4){
-		shape = 0;
+int vaildMove(int temp[][4], int x, int y){
+	int i, j;
+	cur now;
+
+	for(i = 0; i < 4; i++){
+		for(j = 0; j < 4; j++){
+			if(temp[i][j] == 1){
+				now = current;
+				now.x += j + x;
+				now.y += i + y;
+				now = getCursor(now);
+				if(board[now.y][now.x] != 0){
+					if(y > 0) return 2;
+					else return 1;
+				}
+			}				
+		}
 	}
 
-	return shape;			
+	return 0;
 }
 
-cur getCursor(void){
-	cur temp;
-	getyx(stdscr,temp.x,temp.y); //STDSCR 상태 커서를 받을 수있음(real screen 에 나오기 전에 buffer 상태)
+cur getCursor(cur temp){	// 원하는 위치를 보드에서의 위치로 변환
+	temp.x -= BD_X;
+	temp.y -= BD_Y;
+
 	return temp;
+}
+
+void setBlock(){
+	int temp[4][4];
+	int i, j;
+	cur now;
+	
+	getBlock(temp, num, shape);
+	for(i = 0; i < 4; i++){
+		for(j = 0; j < 4; j++){
+			if(temp[i][j] == 1){
+				now = current;
+				now.x += j;
+				now.y += i;
+				now = getCursor(now);
+				board[now.y][now.x] = 1;
+			}				
+		}
+	}
+	shape = 0;
 }
