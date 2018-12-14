@@ -171,3 +171,28 @@ void paintBlock(cur current, int num, int shape){
 		}
 	}
 }
+
+void getBlock(int temp[][4], int num, int shape){
+	int i, j;
+
+	for(i = 0; i < 4; i++){
+		for(j = 0; j < 4; j++){
+			temp[i][j] = block[num][shape][i][j];				
+		}
+	}
+}
+
+int rotation(int num, int shape){
+	int temp[4][4];
+	int before = shape;
+
+	shape++;
+	if(shape >= 4){
+		shape = 0;
+	}
+	getBlock(temp, num, shape);
+	if(vaildMove(temp, 0, 0) == 0)
+		return shape;
+	else
+		return before;	
+}
