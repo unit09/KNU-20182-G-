@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include "tetris.h"
 
+//라인 함수
+
 void removeLine() {
 	int i, j;
 	int check = 0;
