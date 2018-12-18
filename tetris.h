@@ -13,13 +13,18 @@
 #define BD_Y 4
 //block initial position
 #define BLOCK_X 13
-#define BLOCK_Y 0
+#define BLOCK_Y 1
 
 typedef struct cursor{
 	int x;
 	int y;
 }cur; 
 
-cur getCursor(void);
 int createBlock();
 void paintBlock(cur, int, int);
+void getBlock(int[][4], int, int);
+cur getCursor(cur);
+int rotation(int, int);
+int vaildMove(int[][4], int, int);
+int scoreEvent(int);
+void showScore();
