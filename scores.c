@@ -44,3 +44,7 @@ int scoreEvent(int gain){
 	delay = 600 - (level*100);
 	return delay;
 }
+
+int getscore(){
+	return score;
+}
