@@ -13,6 +13,7 @@ void removeLine();
 void downLine(int);
 void nextBlock(int);
 void gameover();
+int getscore();
 
 int board[BD_H][BD_W] = {0, };
 int play = 0;	// 1 = play, 0 = not start or system wait, 2 = pause, 3 = gameover
@@ -352,6 +353,14 @@ void gameover(){
 	for(i = BLOCK_X - BD_X; i < BLOCK_X - BD_X + 4; i++){
 		if(board[0][i] == 1){
 			play = 3;
+			timer = time(NULL);
+			t = localtime(&timer);
+			fp = fopen("score.txt", "a");
+			if(!fp){
+				perror("fopen");
+				exit(2);
+			}
+			fprintf(fp, "%d-%d-%d %d:%d:%d %d점\n", t->tm_year + 1900, t->tm_mon + 1, t->tm_mday, t->tm_hour, t->tm_min, t->tm_sec, getscore());
 			break;
 		}
 	}
